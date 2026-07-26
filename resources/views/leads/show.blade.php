@@ -72,7 +72,7 @@
         document.getElementById('lead-detail').innerHTML = `
             <h3>${lead.name} <span class="badge bg-secondary">${lead.status}</span></h3>
             <p class="text-muted">${lead.email} &middot; ${lead.phone} &middot; ${lead.company ?? 'No company'}</p>
-            <p>Source: ${lead.source} &middot; Expected Value: $${Number(lead.expected_value).toLocaleString()}</p>
+            <p>Source: ${lead.source} &middot; Expected Value: ₹${Number(lead.expected_value).toLocaleString('en-IN')}</p>
             <p>Assigned Rep: ${lead.assigned_rep ? lead.assigned_rep.name : 'Unassigned'}</p>
         `;
 

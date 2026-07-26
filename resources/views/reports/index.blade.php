@@ -37,8 +37,8 @@
                 <td>${rep.leads_by_status.qualified}</td>
                 <td>${rep.leads_by_status.won}</td>
                 <td>${rep.leads_by_status.lost}</td>
-                <td>$${Number(rep.total_expected_value).toLocaleString()}</td>
-                <td>$${Number(rep.won_expected_value).toLocaleString()}</td>
+                <td>₹${Number(rep.total_expected_value).toLocaleString('en-IN')}</td>
+                <td>₹${Number(rep.won_expected_value).toLocaleString('en-IN')}</td>
                 <td>${rep.activity_count}</td>
             </tr>
         `).join('') || '<tr><td colspan="10" class="text-muted">No data.</td></tr>';

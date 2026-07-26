@@ -84,7 +84,7 @@
                 <td>${lead.company ?? '-'}</td>
                 <td>${lead.source}</td>
                 <td><span class="badge bg-secondary">${lead.status}</span></td>
-                <td>$${Number(lead.expected_value).toLocaleString()}</td>
+                <td>₹${Number(lead.expected_value).toLocaleString('en-IN')}</td>
                 <td>${lead.assigned_rep ? lead.assigned_rep.name : '-'}</td>
                 <td><a href="/leads/${lead.id}" class="btn btn-sm btn-outline-primary">View</a></td>
             </tr>

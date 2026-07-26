@@ -20,9 +20,25 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
-        <p class="text-muted mt-3 small text-center">
-            manager@crm.test / rep1@crm.test / rep2@crm.test<br>password: password
-        </p>
+        <hr class="mt-4">
+        <div class="small">
+            <p class="fw-semibold mb-2">Demo Credentials</p>
+
+            <p class="mb-1 fw-semibold">Manager</p>
+            <p class="mb-3 text-muted">manager@crm.test</p>
+
+            <p class="mb-1 fw-semibold">Sales Representatives</p>
+            <ul class="text-muted mb-3 ps-3">
+                <li>priya.nair@crm.test</li>
+                <li>arjun.verma@crm.test</li>
+                <li>ananya.iyer@crm.test</li>
+                <li>sneha.reddy@crm.test</li>
+                <li>karan.malhotra@crm.test</li>
+                <li>vikram.singh@crm.test</li>
+            </ul>
+
+            <p class="fw-bold mb-0">Password for all accounts: password</p>
+        </div>
     </div>
 
     <script src="/js/api.js"></script>

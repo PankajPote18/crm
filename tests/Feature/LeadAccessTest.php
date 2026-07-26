@@ -27,6 +27,17 @@ class LeadAccessTest extends TestCase
             ->assertJsonPath('data.pagination.total', 3);
     }
 
+    public function test_per_page_is_capped_to_avoid_returning_the_entire_table(): void
+    {
+        $manager = User::factory()->manager()->create();
+        Lead::factory()->count(5)->create();
+
+        $response = $this->actingAs($manager, 'sanctum')->getJson('/api/leads?per_page=99999');
+
+        $response->assertOk()
+            ->assertJsonPath('data.pagination.per_page', 100);
+    }
+
     public function test_rep_cannot_view_another_reps_lead(): void
     {
         $rep = User::factory()->rep()->create();

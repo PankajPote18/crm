@@ -41,7 +41,8 @@ class LeadController extends Controller
         $sortDir = $request->get('sort_dir') === 'asc' ? 'asc' : 'desc';
         $query->orderBy($sortBy, $sortDir);
 
-        $leads = $query->paginate($request->integer('per_page', 15));
+        $perPage = max(1, min($request->integer('per_page', 15), 100));
+        $leads = $query->paginate($perPage);
 
         return $this->successResponse([
             'leads' => LeadResource::collection($leads),

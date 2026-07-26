@@ -44,22 +44,28 @@ Indexes were added on `leads.status`, `leads.source`, and `leads.expected_value`
 
 ## Seeder
 
-`php artisan db:seed` (or `migrate --seed`) creates:
+The project ships with seed data — one manager, six sales representatives, and realistic Indian leads and activities — so it's ready to explore immediately after seeding, no manual data entry required.
 
-- 1 manager
-- 2 reps
-- 25 leads split across the two reps (plus 5 unassigned), with a realistic mix of statuses
-- Activities on most leads — every lead seeded as `won`/`lost` is guaranteed at least one activity, since the API would otherwise reject that state
+`php artisan db:seed` (or `migrate --seed`) wipes existing leads, activities, and users and creates a fresh dataset:
+
+- 1 manager and 6 reps, all with Indian names
+- 150 leads split across the 6 reps (25 each) plus 30 unassigned, with Indian names, companies, phone numbers, email addresses, and expected values in Indian Rupees
+- A natural mix of statuses (new/contacted/qualified/won/lost) per rep
+- Several hundred activities whose type and text logically match each lead's stage — e.g. a `won` lead has a full call → demo → quotation → negotiation → close trail, while a `new` lead has none or only an initial call. Every lead seeded as `won`/`lost` is guaranteed at least one activity, since the API would otherwise reject that state
 
 ### Login credentials
 
 All seeded users share the password `password`.
 
-| Role    | Email             |
-|---------|-------------------|
-| Manager | manager@crm.test  |
-| Rep     | rep1@crm.test     |
-| Rep     | rep2@crm.test     |
+| Role    | Email                     | Name           |
+|---------|---------------------------|----------------|
+| Manager | manager@crm.test          | Rohan Mehta    |
+| Rep     | priya.nair@crm.test       | Priya Nair     |
+| Rep     | arjun.verma@crm.test      | Arjun Verma    |
+| Rep     | ananya.iyer@crm.test      | Ananya Iyer    |
+| Rep     | karan.malhotra@crm.test   | Karan Malhotra |
+| Rep     | sneha.reddy@crm.test      | Sneha Reddy    |
+| Rep     | vikram.singh@crm.test     | Vikram Singh   |
 
 ## API Routes
 
@@ -98,16 +104,20 @@ Enforced via `LeadPolicy` and `ActivityPolicy`, not repeated in controllers:
 
 ## Assumptions & Trade-offs
 
+- **Deliberate trade-off:** I kept the architecture simple and avoided unnecessary abstraction (no service/repository layers, no DTOs) to keep the project easy to understand and explain in an interview.
 - **Lead creation** isn't restricted to a role in the prompt, so both managers and reps can create leads.
 - **Search** (`GET /leads?search=`) matches a single query against `name`, `email`, and `company` with `LIKE`, rather than three separate filter params — this is the more common CRM UX and simpler to test from the UI.
 - **Activity count** in the performance report counts activities logged *by* that rep (`activities.user_id`), not all activity on their leads (which could include a manager's activity) — read as "how active is this rep."
 - **Report money fields** are summed in SQL as `DECIMAL` but cast to PHP `float` for the JSON response. Storage stays precise; only the API representation trades precision for simplicity.
-- **Assigning a lead** in the frontend takes a raw rep user ID rather than a dropdown of names, since the API doesn't expose a `/users` listing endpoint and adding one wasn't in scope.
+- **Assigning a lead** in the frontend uses a dropdown populated from `User::where('role', 'rep')`, so only valid reps can ever be selected — there's no raw ID input.
 - The frontend authenticates with a Sanctum token stored in `localStorage` and sent as a Bearer header on every `fetch()` — it does not use Sanctum's cookie/SPA mode, since the assignment only calls for a way to exercise the API manually.
 
-## Future Improvements
+## What I'd do with more time
 
-- A `/users` endpoint so the frontend can show a rep picker instead of a raw ID field.
-- Soft deletes / archiving for leads instead of hard deletes (no delete endpoint exists today).
-- Rate limiting tuned per-endpoint rather than Laravel's default `api` throttle.
-- Structured activity timeline filtering (by type, by date range) on the lead detail view.
+Given the time available, I focused on fully completing all the required features rather than partially implementing bonus ones. With more time, here's what I'd prioritize next:
+
+- **Queued Job:** dispatch a queued job to notify the assigned sales representative whenever a lead is assigned.
+- **Event & Listener:** automatically record an activity whenever a lead's status changes, using Laravel Events and Listeners.
+- **Cache:** cache the rep-performance report and invalidate it whenever leads or activities are modified.
+- **Multi-tenancy:** scope users, leads, activities, and reports by tenant to support multiple organizations.
+- **Docker / Laravel Sail:** add a Docker/Sail setup so the project can be started with a single command.
